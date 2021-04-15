@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block insert %}
+
+    <div class="col-lg-6 offset-lg-3">
+      <br><p>Vote for an election</p><br>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <p class="text-{{ category }}">{{ message }}</p>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+      <form method="POST">
+        <div class="form-group">
+          <label for="election-title">Vote for: <b>{{ election.title }}</b></label>
+          <br><br><label for="voting-options">Options</label>
+          <select class="form-control" id="voting-options" name="vote" required>
+            {% for i in election.voting_options %}
+            <option>{{ i }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Cast Vote</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock insert%}

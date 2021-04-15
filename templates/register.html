@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block insert %}
+    <div class="col-lg-6 offset-lg-3">
+      <p>Build a Secure Online Election for Free</p>
+      <br><p>Registration Form</p>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <p class="text-{{ category }}">{{ message }}</p>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+      <form method="POST" autocomplete="off">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" class="form-control" id="username" name="username" placeholder="Choose Username" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password" name="password" placeholder="Choose Password" required>
+        </div>
+        <div class="form-group">
+          <label for="confirm_password">Confirm Password</label>
+          <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+        </div>
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary">Create Account</button>
+        </div>
+      </form>
+      <br><p>Have an account? Click here to <a href="{{ url_for('login') }}">login.</a></p>
+    </div>
+  </div>
+</div>
+{% endblock insert %}

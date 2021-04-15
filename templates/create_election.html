@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block insert %}
+
+    <div class="col-lg-6 offset-lg-3">
+      <br><p>Create an election</p><br>
+      <form method="POST">
+        <div class="form-group">
+          <label for="title">Election Title</label>
+          <input type="text" class="form-control" id="title" name="title" placeholder="Enter Election Title" required>
+        </div>
+        <div class="form-group">
+          <label for="voting-options">Voting Options</label>
+          <textarea class="form-control" rows="5" id="voting-options" name="voting-options" placeholder="Enter the next voting option on a new line" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Create Election</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock insert %}

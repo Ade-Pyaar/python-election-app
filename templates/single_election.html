@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block insert %}
+
+    <div class="container">
+      <h2>Modal Example</h2>
+      <!-- Button to Open the Modal -->
+      <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+        Open modal
+      </button> -->
+
+      <!-- The Modal -->
+      <div class="modal" id="myModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            
+            <!-- Modal body -->
+            <div class="modal-body">
+              Are you sure you want to delete this election?
+            </div>
+            
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <a href="{{ url_for('delete_election', election_id=election.ref.id()) }}" class="btn btn-danger mr-5">Yes, delete</a>
+              <button type="button" class="btn btn-primary" data-dismiss="modal">No, close</button>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">{{ election.data.title }}</h5>
+        </div>
+        <div class="card-body">
+          {% for j in election.data.voting_options %}
+          <p class="card-text">{{ "{} - {} vote(s)".format(j, election.data.voting_options[j]) }}</p>
+          {% endfor %}
+          <br>
+          <!-- <a href="{{ url_for('delete_election', election_id=election.ref.id()) }}" class="btn btn-danger">Delete</a> -->
+          <div class="text-right">
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal">
+              Delete election
+            </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock insert %}

@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block insert %}
+
+
+    <div class="container">
+      <h2>Modal Example</h2>
+      <!-- Button to Open the Modal -->
+      <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+        Open modal
+      </button> -->
+
+      <!-- The Modal -->
+      <div class="modal" id="myModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+          
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">We hate to see you go...</h4>
+              
+            </div>
+            
+            <!-- Modal body -->
+            <div class="modal-body">
+              Are you sure you want to delete your account?
+            </div>
+            
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <a href="{{ url_for('delete_account', user_id=session['user']['id']) }}" class="btn btn-danger mr-5">Yes, delete</a>
+              <button type="button" class="btn btn-primary" data-dismiss="modal">No, close</button>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+
+
+    <div class="col-lg-6 offset-lg-3">
+      <p>Build a Secure Online Election for Free</p>
+      <br><p>Registration Form</p>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <p class="text-{{ category }}">{{ message }}</p>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+      <form method="POST" autocomplete="off">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" class="form-control" id="username" name="username" value="{{ username }}">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password" name="password" placeholder="Choose Password">
+        </div>
+        <div class="form-group">
+          <label for="confirm_password">Confirm Password</label>
+          <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password">
+        </div>
+        <div class="text-left">
+          <button type="submit" class="btn btn-primary">Update Details</button>
+        </div>
+      </form>
+      <div class="text-right">
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal">
+          Delete Account
+        </button>
+      </div>
+    </div>
+  <br><br>
+  </div>
+{% endblock insert %}

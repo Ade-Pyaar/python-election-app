@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block insert %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <p class="text-{{ category }}">{{ message }}</p>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      <p><b> My Elections</b></p>
+      {% if length(elections) != 0 %}
+          {% for i in elections %}
+          <div class="col-lg-6">
+            <div class="card">
+              <div class="card-header">
+                <a href="{{ url_for('view_single_election', election_id=i.ref.id()) }}" class="btn btn-link">{{ i.data.title }}</a>
+              </div>
+            </div>
+          </div>
+          <br>
+          {% endfor %}
+      {% else %}
+          <p>Oops, you do not have any election(s). Head over to the election tab above to create one or vote for others</p>
+      {% endif %}
+  </div>
+</div>
+{% endblock insert %}
