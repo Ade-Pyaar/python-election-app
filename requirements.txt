@@ -4,3 +4,4 @@ Flask_Bootstrap4==4.0.2
 pytz==2020.4
 flask_bootstrap==3.3.7.1
 python-decouple==3.4
+gunicorn==19.9.0
