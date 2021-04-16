@@ -10,11 +10,11 @@
       {% endwith %}
 
     {% for item in total_elections %}
-      {% if item["data"]["creator"] != session["user"]["id"] %}
+      {% if item["data"]["creator"] != session["user"]["username"] %}
         <div class="col-lg-6">
           <div class="card">
             <div class="card-header">
-              <h5 class="card-title">{{ item.data.title }}</h5>
+              <h5 class="card-title">{{ item.data.title }} <small>By {{ item.data.creator }}</small></h5>
             </div>
             <div class="card-body">
               {% for j in item.data.voting_options %}

@@ -32,32 +32,45 @@ def login_required(f):
 
 @app.route("/register/", methods=["GET", "POST"])
 def register():
+    username = ''
+
     if request.method == "POST":
         username = request.form.get("username").strip().lower()
         password = request.form.get("password")
         confirm_password = request.form.get("confirm_password")
 
-        if password != confirm_password:
-            flash("Your passwords does not match!", "danger")
-            return render_template("register.html")
+        upper_result = any(letter.isupper() for letter in password)
+        lower_result = any(letter.islower() for letter in password)
+        digit_result = any(letter.isdigit() for letter in password)
+        printable_result = any(letter.isprintable() for letter in password)
 
-        try:
-            _ = client.query(
-                q.get(q.match(q.index("users_index"), username)))
-            flash("The account you are trying to create already exists!", "danger")
-        except:
-            _ = client.query(q.create(q.collection("Users"), {
-                "data": {
-                    "username": username,
-                    "password": hashlib.sha512(password.encode()).hexdigest(),
-                    "date": datetime.now(pytz.UTC)
-                }
-            }))
-            flash(
-                "You have successfully created your account, you can now create online elections!", "success")
-        return redirect(url_for("login"))
+        if upper_result and lower_result and digit_result and printable_result and len(password) >= 8:
 
-    return render_template("register.html")
+            if password != confirm_password:
+                flash("Your passwords does not match!", "danger")
+                return render_template("register.html", username=username)
+
+            try:
+                _ = client.query(
+                    q.get(q.match(q.index("users_index"), username)))
+                flash("The account you are trying to create already exists!", "danger")
+            except:
+                _ = client.query(q.create(q.collection("Users"), {
+                    "data": {
+                        "username": username,
+                        "password": hashlib.sha512(password.encode()).hexdigest(),
+                        "date": datetime.now(pytz.UTC)
+                    }
+                }))
+                flash(
+                    "You have successfully created your account, you can now create online elections!", "success")
+            return redirect(url_for("login"))
+
+        else:
+            flash("Make sure your password follows the required format!", "danger")
+            return render_template("register.html", username=username)
+
+    return render_template("register.html", username=username)
 
 
 
@@ -116,7 +129,7 @@ def create():
 
         _ = client.query(q.create(q.collection("Elections"), {
             "data": {
-                "creator": session["user"]["id"],
+                "creator": session["user"]["username"],
                 "title": title,
                 "voting_options": options,
                 "voters": [],
@@ -139,7 +152,7 @@ def election(election_id):
         election = client.query(
             q.get(q.ref(q.collection("Elections"), election_id)))
 
-        if election["data"]["creator"] != session["user"]["id"]:
+        if election["data"]["creator"] != session["user"]["username"]:
             return redirect(url_for('vote', election_id=election_id))
         else:
             return redirect(url_for('view_single_election', election_id=election_id))
@@ -158,13 +171,18 @@ def election(election_id):
 @login_required
 def view_single_election(election_id):
     try:
-        election = client.query(
-            q.get(q.ref(q.collection("Elections"), election_id)))
+        election = client.query(q.get(q.ref(q.collection("Elections"), election_id)))
+        url = request.url
+        new_url = url.replace("my_election", "election")
 
     except:
         flash("Election not found", "danger")
     
-    return render_template("single_election.html", election=election)
+    return render_template("single_election.html", election=election, url=new_url)
+
+
+
+
 
 
 @app.route("/delete_election/<int:election_id>/")
@@ -193,7 +211,7 @@ def vote(election_id):
         election = client.query(
             q.get(q.ref(q.collection("Elections"), election_id)))
 
-        if session["user"]["id"] in election["data"]["voters"]:
+        if session["user"]["username"] in election["data"]["voters"]:
             flash("You have voted for this election before!", 'info')
             return redirect(url_for('view_other_election'))
 
@@ -204,7 +222,7 @@ def vote(election_id):
     if request.method == "POST":
         vote = request.form.get("vote").strip()
         election["data"]["voting_options"][vote] += 1
-        election["data"]["voters"].append(session["user"]["id"])
+        election["data"]["voters"].append(session["user"]["username"])
         client.query(q.update(q.ref(q.collection("Elections"), election_id), {
                      "data": {"voting_options": election["data"]["voting_options"], "voters":election["data"]["voters"]}}))
         flash("Your vote was successfully recorded!", "success")
@@ -222,7 +240,7 @@ def vote(election_id):
 def dashboard():
 
     elections = client.query(q.paginate(
-        q.match(q.index("election_index"), session["user"]["id"])))
+        q.match(q.index("election_index"), session["user"]["username"])))
 
     elections_ref = []
     for i in elections["data"]:
@@ -258,7 +276,7 @@ def view_other_election():
 @login_required
 def view_my_election():
     elections = client.query(q.paginate(
-        q.match(q.index("election_index"), session["user"]["id"])))
+        q.match(q.index("election_index"), session["user"]["username"])))
 
     elections_ref = []
     for i in elections["data"]:
@@ -279,33 +297,48 @@ def account():
         password = request.form.get("password")
         confirm_password = request.form.get("confirm_password")
 
+        upper_result = any(letter.isupper() for letter in password)
+        lower_result = any(letter.islower() for letter in password)
+        digit_result = any(letter.isdigit() for letter in password)
+        printable_result = any(letter.isprintable() for letter in password)
+
         if password != confirm_password:
-            flash("Your passwords does not match!", "danger")
-            return render_template("register.html")
+                        flash("Your passwords does not match!", "danger")
+                        return render_template("register.html", username=username)
+
 
         try:
             _ = client.query(
                 q.get(q.match(q.index("users_index"), username)))
             flash("The name you are trying to choose already exists!", "danger")
         except:
-            if password != '' or password != ' ' and username == '' or username == ' ':
-                user = client.query(q.update(q.ref(q.collection("Users"), session['user']['id']), {
+            if password != '' or password != ' ' and username == session['user']['username']:
+                if upper_result and lower_result and digit_result and printable_result and len(password) >= 8:
+                    user = client.query(q.update(q.ref(q.collection("Users"), session['user']['username']), {
                         "data": {
                         "password": hashlib.sha512(password.encode()).hexdigest(),
                     }}))
-            elif password == '' or password == ' ' and username != '' or username != ' ':
-                user = client.query(q.update(q.ref(q.collection("Users"), session['user']['id']), {
+                else:
+                    flash("Make sure your password follows the required format!", "danger")
+                    return render_template("register.html", username=username)
+
+            elif password == '' or password == ' ' and username != session['user']['username']:
+                user = client.query(q.update(q.ref(q.collection("Users"), session['user']['username']), {
                         "data": {
                         "username": username
                     }}))
 
-            elif password != '' or password != ' ' and username != '' or username != ' ':
-                user = client.query(q.update(q.ref(q.collection("Users"), session['user']['id']), {
-                        "data": {
-                        "username": username,
-                        "password": hashlib.sha512(password.encode()).hexdigest()
-                    }}))
-
+            elif password != '' or password != ' ' and username != session['user']['username']:
+                if upper_result and lower_result and digit_result and printable_result and len(password) >= 8:
+                    user = client.query(q.update(q.ref(q.collection("Users"), session['user']['username']), {
+                            "data": {
+                            "username": username,
+                            "password": hashlib.sha512(password.encode()).hexdigest()
+                        }}))
+                else:
+                    flash("Make sure your password follows the required format!", "danger")
+                    return render_template("register.html", username=username)
+        
 
             session["user"] = {
                 "id": user["ref"].id(),

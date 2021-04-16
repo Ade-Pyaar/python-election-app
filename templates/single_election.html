@@ -40,12 +40,17 @@
           {% for j in election.data.voting_options %}
           <p class="card-text">{{ "{} - {} vote(s)".format(j, election.data.voting_options[j]) }}</p>
           {% endfor %}
-          <br>
-          <!-- <a href="{{ url_for('delete_election', election_id=election.ref.id()) }}" class="btn btn-danger">Delete</a> -->
+          
+          <div>
+            <small>Copy this link to share your election with other people</small>
+            <input type="text" value="{{ url }}" readonly>
+          </div>
           <div class="text-right">
-            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal">
+            <button type="button" class="btn btn-danger text-right ml-5" data-toggle="modal" data-target="#myModal">
               Delete election
             </button>
+          </div>
+          </div>
         </div>
       </div>
     </div>

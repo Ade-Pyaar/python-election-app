@@ -9,10 +9,21 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <style>
+    .footer {
+       position: fixed;
+       left: 0;
+       bottom: 0;
+       width: 100%;
+       /* background-color: red; */
+       color: black;
+       text-align: left;
+    }
+    </style>
 </head>
 <body>
     {% block content %}
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
         <!-- Brand -->
         <a class="navbar-brand" href="{{ url_for('dashboard') }}">Voting App</a>
       
@@ -50,7 +61,7 @@
               </li>
             {% endif %}
         </ul>
-      </nav>
+      </nav><br>
     
     <div class="container">
         <div class="row justify-content-center">
@@ -64,7 +75,11 @@
         {% endblock insert %}
     </div>
     {% endblock content %}
-    
+    <br><br>
+  <div class="footer">
+    Made by Pyaar <br>
+    Email: Adebayoibrahim2468@gmail.com
+  </div>
 </body>
 </html>
 
