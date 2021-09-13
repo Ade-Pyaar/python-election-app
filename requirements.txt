@@ -1,7 +1,7 @@
-faunadb==4.0.1
-Flask==1.1.2
-Flask_Bootstrap4==4.0.2
-pytz==2020.4
-flask_bootstrap==3.3.7.1
+pyperclip==1.8.2
+Flask_Bootstrap==3.3.7.1
+Flask==2.0.1
+pytz==2021.1
+faunadb==4.1.0
 python-decouple==3.4
 gunicorn==19.9.0
