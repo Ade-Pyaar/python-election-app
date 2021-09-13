@@ -1,4 +1,5 @@
 import pytz
+import pyperclip as pc
 import hashlib
 from datetime import datetime
 from flask import *
@@ -39,6 +40,8 @@ def register():
         password = request.form.get("password")
         confirm_password = request.form.get("confirm_password")
 
+        next_url = request.form.get("next")
+
         upper_result = any(letter.isupper() for letter in password)
         lower_result = any(letter.islower() for letter in password)
         digit_result = any(letter.isdigit() for letter in password)
@@ -64,7 +67,8 @@ def register():
                 }))
                 flash(
                     "You have successfully created your account, you can now create online elections!", "success")
-            return redirect(url_for("login"))
+
+            return redirect(url_for("login", next=next_url))
 
         else:
             flash("Make sure your password follows the required format!", "danger")
@@ -99,6 +103,7 @@ def login():
                 
                 if next_url:
                     return redirect(next_url)
+
                 redirect(url_for('dashboard'))
 
             else:
@@ -107,7 +112,7 @@ def login():
         except:
             flash(
                 "Network error, try again", "danger")
-        return redirect(url_for("login"))
+        return redirect(url_for("login", next=next_url))
 
     return render_template("login.html")
 
@@ -158,9 +163,7 @@ def election(election_id):
             return redirect(url_for('view_single_election', election_id=election_id))
 
     except:
-        flash("Election not found", "danger")
-
-    return redirect(url_for('login'))
+        return render_template('404.html')
     
 
 
@@ -174,11 +177,24 @@ def view_single_election(election_id):
         election = client.query(q.get(q.ref(q.collection("Elections"), election_id)))
         url = request.url
         new_url = url.replace("my_election", "election")
+        return render_template("single_election.html", election=election, url=new_url)
 
     except:
-        flash("Election not found", "danger")
+        return render_template('404.html')
     
-    return render_template("single_election.html", election=election, url=new_url)
+    
+
+
+
+@app.route("/copy_election/<int:election_id>/", methods=["GET", "POST"])
+@login_required
+def copy_link(election_id):
+    url = request.url
+    new_url = url.replace("copy_election", "election")
+    pc.copy(new_url)
+    flash("Link copied to clipboard", "success")
+
+    return redirect(url_for("view_single_election", election_id=election_id))
 
 
 
@@ -192,7 +208,7 @@ def delete_election(election_id):
         _ = client.query(
             q.get(q.ref(q.collection("Elections"), election_id)))
     except:
-        flash("Election not found", "danger")
+        return render_template('404.html')
 
     _ = client.query(q.delete(q.ref(q.collection("Elections"), election_id)))
     flash("The election have been deleted", "success")
@@ -216,7 +232,7 @@ def vote(election_id):
             return redirect(url_for('view_other_election'))
 
     except:
-        flash("Election not found", "danger")
+        return render_template('404.html')
     
 
     if request.method == "POST":
@@ -263,7 +279,6 @@ def view_other_election():
         elections_ref.append(q.get(q.ref(q.collection("Elections"), i.id())))
 
     total_elections = client.query(elections_ref)
-
 
     return render_template("view_other_elections.html", total_elections=total_elections)
 

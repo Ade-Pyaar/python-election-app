@@ -3,11 +3,6 @@
 {% block insert %}
 
     <div class="container">
-      <h2>Modal Example</h2>
-      <!-- Button to Open the Modal -->
-      <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-        Open modal
-      </button> -->
 
       <!-- The Modal -->
       <div class="modal" id="myModal">
@@ -31,6 +26,14 @@
       
     </div>
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <p class="text-{{ category }}">{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
     <div class="col-lg-6">
       <div class="card">
         <div class="card-header">
@@ -44,7 +47,9 @@
           <div>
             <small>Copy this link to share your election with other people</small>
             <input type="text" value="{{ url }}" readonly>
+            <a href="{{ url_for('copy_link', election_id=election.ref.id()) }}" class="btn btn-primary ml-2">Copy</a>            
           </div>
+          
           <div class="text-right">
             <button type="button" class="btn btn-danger text-right ml-5" data-toggle="modal" data-target="#myModal">
               Delete election

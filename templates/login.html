@@ -24,13 +24,13 @@
           <input type="password" class="form-control" id="password" name="password" placeholder="Enter Your Password" required>
         </div>
 
+        <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
+
         <div class="text-center">
           <button type="submit" class="btn btn-primary">Login</button>
         </div>
         
-        <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
-
       </form>
 
-      <br><p>Don't have an account? Click here to <a href="{{ url_for('register') }}">register.</a></p>
+      <br><p>Don't have an account? Click here to <a href="{{ url_for('register', next=request.args.get('next', '')) }}">register.</a></p>
 {% endblock insert %}
